@@ -63,9 +63,9 @@ func UserCheck(username string,encwd string) bool {
 
 //Token数据库校验
 func TokenIsValue(username string,token string) bool{
-	stmt , err :=dbsql.DBConn().Prepare("select * from tlb_user_token where user_name=? limit 1")
+	stmt , err :=dbsql.DBConn().Prepare("select * from tbl_user_token where user_name=? limit 1")
 	if err !=nil {
-		log.Println(err.Error())
+		log.Println("获取*sql错误 ->",err.Error())
 		return false
 	}
 	//进行匹配操作是否存在，真Ture/假false
@@ -116,7 +116,7 @@ type UserInfo struct {
 func GetUserInfo(username string) (UserInfo,error) {
 	user := UserInfo{}
 	stmt,err := dbsql.DBConn().Prepare(
-		"select user_name,signuo_at from tbl_user where user_name? limit 1")
+		"select user_name,signup_at from tbl_user where user_name=? limit 1")
 	if err != nil {
 		log.Println("GetUserInfo mysql is Failed ->",err)
 		return	user,err

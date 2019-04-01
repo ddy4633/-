@@ -76,6 +76,8 @@ func UploadSeccessInfo(w http.ResponseWriter,r *http.Request) {
 	//取出hash的值
 	filehash := r.Form["filehash"][0]
 	io.WriteString(w,"Upload finished!!! hash_Value ->"+filehash)
+	time.Sleep(3*time.Second)
+	http.Redirect(w,r,"/static/view/home.html",302)
 }
 
 //实现元数据查询的信息API
