@@ -63,7 +63,7 @@ func UserCheck(username string,encwd string) bool {
 
 //Token数据库校验
 func TokenIsValue(username string,token string) bool{
-	stmt , err :=dbsql.DBConn().Prepare("select * from tlb_token where user_name=? limit 1")
+	stmt , err :=dbsql.DBConn().Prepare("select * from tlb_user_token where user_name=? limit 1")
 	if err !=nil {
 		log.Println(err.Error())
 		return false

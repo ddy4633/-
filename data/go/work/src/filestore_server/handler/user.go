@@ -114,6 +114,7 @@ func UserInfoHandler(w http.ResponseWriter,r *http.Request) {
 	token := r.Form.Get("token")
 	//验证token信息是否有效
 	info := TokenisValid(username,token)	//还没有完成
+	log.Println("当前的用户信息",info)
 	if !info {
 		//跳转返回登入页面刷新时间戳
 		http.RedirectHandler("/user/signin",302)
@@ -146,7 +147,10 @@ func TokenisValid(username string,token string) bool {
 			log.Println("Token超时了跳转回登入页面")
 			return false
 		}
+		log.Println("sten(转后的时间) ->",sten,"错误信息->",err)
 	}
+	log.Println("RetTokenTime(截取出的时间后8位) ->",RetokenTime,
+		"\nRetime(当前的时间戳) ->",Retime)
 
 	//判断Token是否是数据库中的user_token相同的Token
 	info := db.TokenIsValue(username,token)
