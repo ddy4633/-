@@ -3,6 +3,7 @@ package handler
 import (
 	"../meta"
 	"../util"
+	dblayer "../db"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -12,6 +13,7 @@ import (
 	"os"
 	"time"
 )
+
 //处理文件上传函数Uploadhandler
 func UploadHandler(w http.ResponseWriter,r *http.Request) {
 	//判断用户的请求方式是什么，返回相应的页面
@@ -64,6 +66,16 @@ func UploadHandler(w http.ResponseWriter,r *http.Request) {
 			os.Exit(1)
 		}
 		url := "/file/upload/seccess" + "?filehash=" + fileMeta.FileShall
+
+		//TODO -> 更新用户文件表记录
+		r.ParseForm()
+		username := r.Form.Get("username")
+		info := dblayer.OnUserFileUploadFinished(username,fileMeta.FileShall,fileMeta.FileName,fileMeta.FileSize)
+		if info {
+			http.Redirect(w,r,"/static/view/home.html",302)
+		}else {
+			_,_ = w.Write([]byte("Upload Failed"))
+		}
 		//调用地址重写函数当执行完成后路由到指定的请求地址
 		http.Redirect(w,r,url,http.StatusFound)
 	}
@@ -74,9 +86,8 @@ func UploadSeccessInfo(w http.ResponseWriter,r *http.Request) {
 	//解析操作
 	r.ParseForm()
 	//取出hash的值
-	filehash := r.Form["filehash"][0]
-	io.WriteString(w,"Upload finished!!! hash_Value ->"+filehash)
-	time.Sleep(3*time.Second)
+	//filehash := r.Form["filehash"][0]
+	//io.WriteString(w,"Upload finished!!! hash_Value ->"+filehash)
 	http.Redirect(w,r,"/static/view/home.html",302)
 }
 

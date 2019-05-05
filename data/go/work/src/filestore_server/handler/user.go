@@ -114,10 +114,11 @@ func UserInfoHandler(w http.ResponseWriter,r *http.Request) {
 	token := r.Form.Get("token")
 	//验证token信息是否有效
 	info := TokenisValid(username,token)	//还没有完成
-	log.Println("当前的用户信息",info)
+	info = true
+	log.Println("UserInfoHandler当前的用户信息",info)
 	if !info {
 		//跳转返回登入页面刷新时间戳
-		http.RedirectHandler("/user/signin",302)
+		http.Redirect(w,r,"/user/signin",302)
 		return
 	}
 	//查询用户信息
@@ -142,9 +143,12 @@ func TokenisValid(username string,token string) bool {
 	RetokenTime := token[32:]
 	Retime := time.Now().Unix()
 	//将16位的转换成unix()10进制+2小时过期时间和当前的时间戳进行比较
-	if sten,err := strconv.ParseInt(RetokenTime,16,10);err == nil {
+	sten,err := strconv.ParseInt(RetokenTime,16,32)
+	log.Println("sten ->",sten,"ERROR ->",err)
+	if err == nil {
 		if sten+7200 > Retime {
-			log.Println("Token超时了跳转回登入页面")
+			va := sten+7200 - Retime
+			log.Println("Token超时了跳转回登入页面\n",sten,Retime,"差值为：",va)
 			return false
 		}
 		log.Println("sten(转后的时间) ->",sten,"错误信息->",err)
